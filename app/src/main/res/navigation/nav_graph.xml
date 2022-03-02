@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/fragment_weather_list">
+
+    <fragment
+        android:id="@+id/fragment_weather_list"
+        android:name="com.itis.androidspringcourseitis.fragment.ListCitiesFragment"
+        android:label="fragment_first"
+        tools:layout="@layout/fragment_weather_list">
+        <action
+            android:id="@+id/action_fragment_list_to_fragment_detail"
+            app:destination="@id/fragment_detail" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_detail"
+        android:name="com.itis.androidspringcourseitis.fragment.CityWeatherFragment"
+        android:label="fragment_second"
+        tools:layout="@layout/fragment_weather_details">
+        <argument
+            android:name="idCity"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+
+</navigation>
