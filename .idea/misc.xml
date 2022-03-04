@@ -4,9 +4,11 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Olga/AndroidStudioProjects/AndroidSpringCourseITIS/app/src/main/res/layout/activity_main.xml" value="0.209375" />
-        <entry key="..\:/Users/Olga/AndroidStudioProjects/AndroidSpringCourseITIS/app/src/main/res/layout/fragment_weather_details.xml" value="0.25" />
+        <entry key="..\:/Users/Olga/AndroidStudioProjects/AndroidSpringCourseITIS/app/src/main/res/layout/fragment_weather_details.xml" value="0.22" />
         <entry key="..\:/Users/Olga/AndroidStudioProjects/AndroidSpringCourseITIS/app/src/main/res/layout/fragment_weather_list.xml" value="0.18" />
         <entry key="..\:/Users/Olga/AndroidStudioProjects/AndroidSpringCourseITIS/app/src/main/res/layout/item_weather.xml" value="0.209375" />
+        <entry key="..\:/Users/Olga/AndroidStudioProjects/AndroidSpringCourseITIS/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.22552083333333334" />
+        <entry key="..\:/Users/Olga/AndroidStudioProjects/AndroidSpringCourseITIS/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.22552083333333334" />
       </map>
     </option>
   </component>

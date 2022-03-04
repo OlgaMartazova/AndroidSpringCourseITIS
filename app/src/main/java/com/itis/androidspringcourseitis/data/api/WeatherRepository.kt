@@ -17,18 +17,52 @@ private const val QUERY_API_KEY = "appid"
 private const val METRIC = "metric"
 private const val QUERY_UNITS = "units"
 
-private const val LANG_CODE = "ru"
+private const val LANG_CODE = "en"
 private const val QUERY_LANG = "lang"
 
 class WeatherRepository {
 
-    private val api: WeatherApi by lazy {
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(okhttp)
-            .addConverterFactory(GsonConverterFactory.create())
+
+    //add api key
+    private val apiKeyInterceptor = Interceptor { chain ->
+        val original = chain.request()
+        val newURL = original.url.newBuilder()
+            .addQueryParameter(QUERY_API_KEY, API_KEY)
             .build()
-            .create(WeatherApi::class.java)
+
+        chain.proceed(
+            original.newBuilder()
+                .url(newURL)
+                .build()
+        )
+    }
+
+    //temp in °C
+    private val unitsInterceptor = Interceptor { chain ->
+        val original = chain.request()
+        val newURL = original.url.newBuilder()
+            .addQueryParameter(QUERY_UNITS, METRIC)
+            .build()
+
+        chain.proceed(
+            original.newBuilder()
+                .url(newURL)
+                .build()
+        )
+    }
+
+    //lang English
+    private val langInterceptor = Interceptor { chain ->
+        val original = chain.request()
+        val newURL = original.url.newBuilder()
+            .addQueryParameter(QUERY_LANG, LANG_CODE)
+            .build()
+
+        chain.proceed(
+            original.newBuilder()
+                .url(newURL)
+                .build()
+        )
     }
 
     private val okhttp: OkHttpClient by lazy {
@@ -49,45 +83,13 @@ class WeatherRepository {
             .build()
     }
 
-    //add api key
-    private val apiKeyInterceptor = Interceptor { chain ->
-        val original = chain.request()
-        val newURL = original.url.newBuilder()
-            .addQueryParameter(QUERY_API_KEY, API_KEY)
+    private val api: WeatherApi by lazy {
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(okhttp)
+            .addConverterFactory(GsonConverterFactory.create())
             .build()
-
-        chain.proceed(
-            original.newBuilder()
-                .url(newURL)
-                .build()
-        )
-    }
-
-
-    private val unitsInterceptor = Interceptor { chain ->
-        val original = chain.request()
-        val newURL = original.url.newBuilder()
-            .addQueryParameter(QUERY_UNITS, METRIC)
-            .build()
-
-        chain.proceed(
-            original.newBuilder()
-                .url(newURL)
-                .build()
-        )
-    }
-
-    private val langInterceptor = Interceptor { chain ->
-        val original = chain.request()
-        val newURL = original.url.newBuilder()
-            .addQueryParameter(QUERY_LANG, LANG_CODE)
-            .build()
-
-        chain.proceed(
-            original.newBuilder()
-                .url(newURL)
-                .build()
-        )
+            .create(WeatherApi::class.java)
     }
 
 

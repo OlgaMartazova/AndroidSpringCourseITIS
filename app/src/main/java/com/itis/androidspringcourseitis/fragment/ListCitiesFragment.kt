@@ -1,7 +1,7 @@
 package com.itis.androidspringcourseitis.fragment
 
 import android.Manifest
-import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -23,7 +23,6 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-
 
 private const val COUNT_CITY = 10
 
@@ -53,24 +52,19 @@ class ListCitiesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        cityAdapter = CityAdapter(cities as ArrayList<City>) {
-            navigateToWeatherDetails(it)
-        }
-
+        binding.svCity.queryHint = "type a city"
+        getLocation()
         searchCity()
-
-        if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-            Snackbar.make(binding.root, "Location is needed", Snackbar.LENGTH_LONG)
-                .show()
-        } else {
-            requestLocationAccess()
-        }
     }
 
     private fun getList() {
         lifecycleScope.launch {
             try {
                 cities = repository.getNearCities(latitude, longitude, COUNT_CITY).list
+                cityAdapter = CityAdapter(cities as ArrayList<City>) {
+                    navigateToWeatherDetails(it)
+                }
+                binding.rvWeather.adapter = cityAdapter
             } catch (ex: HttpException) {
                 Log.e("всё плохо", ex.message.toString())
             }
@@ -109,44 +103,47 @@ class ListCitiesFragment : Fragment() {
     }
 
 
-    @SuppressLint("MissingPermission")
-    private val locationPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            when {
-                granted -> {
-                    fusedLocationClient =
-                        LocationServices.getFusedLocationProviderClient(requireActivity())
-                    fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                        if (location != null) {
-                            latitude = location.latitude
-                            longitude = location.longitude
-                            Snackbar.make(
-                                binding.root,
-                                "Location is found",
-                                Snackbar.LENGTH_LONG
-                            )
-                                .show()
-                        } else {
-                            Snackbar.make(
-                                binding.root,
-                                "Location is not found",
-                                Snackbar.LENGTH_LONG
-                            )
-                                .show()
-                        }
-                    }
+    private fun getLocation() {
+        if (context?.let {
+                ActivityCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            } == PackageManager.PERMISSION_GRANTED) {
+
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    latitude = location.latitude
+                    longitude = location.longitude
                 }
-                !shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
-                    // доступ к локации запрещен, пользователь поставил галочку Don't ask again.
-                }
-                else -> {
-                    shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
+                getList()
+            }
+        } else {
+            val permissions = arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+            )
+            requestPermissions(permissions, 100)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            100 -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getLocation()
+                } else {
+                    Snackbar.make(binding.root, "access denied", Snackbar.LENGTH_SHORT)
+                        .show()
+                    getList()
                 }
             }
-            getList()
         }
-
-    private fun requestLocationAccess() {
-        locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 }
+
