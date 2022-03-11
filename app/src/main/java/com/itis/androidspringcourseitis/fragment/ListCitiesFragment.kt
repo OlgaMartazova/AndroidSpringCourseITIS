@@ -1,6 +1,7 @@
 package com.itis.androidspringcourseitis.fragment
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -10,9 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.itis.androidspringcourseitis.R
 import com.itis.androidspringcourseitis.data.api.WeatherRepository
@@ -61,10 +64,12 @@ class ListCitiesFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 cities = repository.getNearCities(latitude, longitude, COUNT_CITY).list
-                cityAdapter = CityAdapter(cities as ArrayList<City>) {
-                    navigateToWeatherDetails(it)
+                context?.let{ context ->
+                    cityAdapter = CityAdapter(cities as ArrayList<City>, Glide.with(context)) {city ->
+                        navigateToWeatherDetails(city)
+                    }
+                    binding.rvWeather.adapter = cityAdapter
                 }
-                binding.rvWeather.adapter = cityAdapter
             } catch (ex: HttpException) {
                 Log.e("всё плохо", ex.message.toString())
             }

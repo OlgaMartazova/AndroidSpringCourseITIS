@@ -23,7 +23,7 @@
         android:id="@+id/tv_city"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="32dp"
         android:text="CITY"
         android:textAllCaps="true"
         android:textColor="@color/black"
@@ -48,15 +48,28 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:textColor="@color/black"/>
 
+    <TextView
+        android:id="@+id/tv_current_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:text="at 23:30"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/tv_country"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <ImageView
         android:id="@+id/iv_weather"
         android:layout_width="wrap_content"
         android:layout_height="150dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
         android:src="@drawable/ic_launcher_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_country" />
+        app:layout_constraintTop_toBottomOf="@id/tv_current_time" />
 
     <TextView
         android:id="@+id/tv_temp"
@@ -171,7 +184,7 @@
         android:layout_height="wrap_content"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:text="3 km/h"
+        android:text="3 m/s"
         android:textAllCaps="true"
         android:textColor="@color/black"
         app:layout_constraintTop_toBottomOf="@id/gl_panel2"

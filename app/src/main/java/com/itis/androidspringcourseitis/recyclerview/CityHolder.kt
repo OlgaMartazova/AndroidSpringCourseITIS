@@ -1,15 +1,22 @@
 package com.itis.androidspringcourseitis.recyclerview
 
+import android.content.Context
+import android.content.res.Resources
+import android.provider.Settings.Global.getString
+import android.provider.Settings.System.getString
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.RequestManager
 import com.itis.androidspringcourseitis.R
 import com.itis.androidspringcourseitis.data.model.list.City
 import com.itis.androidspringcourseitis.databinding.ItemWeatherBinding
+import com.itis.androidspringcourseitis.databinding.ItemWeatherCvBinding
 
 class CityHolder(
-    private val binding: ItemWeatherBinding,
+    private val binding: ItemWeatherCvBinding,
+    private val glide: RequestManager,
     private val selectCity: (Int) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -24,8 +31,13 @@ class CityHolder(
     fun bind(item: City) {
         city = item
         with(binding) {
+            glide.load("http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png")
+                .into(ivSmallWeather)
             tvName.text = item.name
-            tvTemp.text = item.main.temp.toString()
+            val temp = String.format("%.1f", item.main.temp)
+            tvTemp.text = "${temp}°C"
+            //tvTemp.text = Resources.getSystem().getString(R.string.tv_temp, item.main.temp)
+
             when (item.main.temp) {
                 in 30.0..40.0 -> setColor(R.color.temp_40)
                 in 20.0..30.0 -> setColor(R.color.temp_30)
@@ -53,14 +65,16 @@ class CityHolder(
     companion object {
         fun create(
             parent: ViewGroup,
+            glide: RequestManager,
             selectCity: (Int) -> Unit
         ) = CityHolder(
-            ItemWeatherBinding.inflate(
+            ItemWeatherCvBinding.inflate(
                 LayoutInflater
                     .from(parent.context),
                 parent,
                 false
             ),
+            glide,
             selectCity
         )
     }

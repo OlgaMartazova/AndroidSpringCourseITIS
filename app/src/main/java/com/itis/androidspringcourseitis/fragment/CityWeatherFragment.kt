@@ -1,5 +1,7 @@
 package com.itis.androidspringcourseitis.fragment
 
+import android.annotation.SuppressLint
+import android.content.res.Resources
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
@@ -10,12 +12,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import com.itis.androidspringcourseitis.R
 import com.itis.androidspringcourseitis.data.api.WeatherRepository
 import com.itis.androidspringcourseitis.data.model.info.WeatherInfo
 import com.itis.androidspringcourseitis.databinding.FragmentWeatherDetailsBinding
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import timber.log.Timber
+import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -62,18 +66,17 @@ class CityWeatherFragment : Fragment() {
             val gcd = Geocoder(context)
             val addresses = gcd.getFromLocation(city.coord.lat, city.coord.lon, 1);
 
-            if (addresses.size > 0)
-            {
+            if (addresses.size > 0) {
                 val countryName = addresses[0].countryName
                 tvCountry.text = countryName
             }
             glide.load("http://openweathermap.org/img/wn/${city.weather[0].icon}@2x.png")
                 .into(ivWeather)
-            tvTemp.text = "${city.main.temp}°C"
+            tvTemp.text = resources.getString(R.string.tv_temp, city.main.temp)
             tvWeather.text = city.weather[0].description
-            tvRealfeel.text = "ReelFeel ${city.main.feelsLike}°C"
+            tvRealfeel.text = resources.getString(R.string.tv_realfeel, city.main.feelsLike)
             tvHumidity.text = "${city.main.humidity}%"
-            tvWind.text = "${city.wind.speed} km/h"
+            tvWind.text = resources.getString(R.string.tv_wind, city.wind.speed)
             tvDirection.text = when (city.wind.deg) {
                 in 0..22 -> "N"
                 in 23..67 -> "NE"
@@ -93,6 +96,12 @@ class CityWeatherFragment : Fragment() {
 
             date = Date((city.sys.sunset + city.timezone) * 1000.toLong())
             tvSunset.text = formatter.format(date)
+
+
+            formatter.timeZone = TimeZone.getTimeZone("UTC")
+            val dateInUtc = Date()
+            date = Date(dateInUtc.time + city.timezone * 1000.toLong())
+            tvCurrentTime.text = formatter.format(date)
         }
     }
 
