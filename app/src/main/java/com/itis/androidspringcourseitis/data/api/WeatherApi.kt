@@ -1,7 +1,7 @@
 package com.itis.androidspringcourseitis.data.api
 
-import com.itis.androidspringcourseitis.data.model.info.WeatherInfo
-import com.itis.androidspringcourseitis.data.model.list.WeatherList
+import com.itis.androidspringcourseitis.data.api.model.WeatherInfo
+import com.itis.androidspringcourseitis.data.api.model.WeatherList
 import retrofit2.http.GET
 import retrofit2.http.Query
 

@@ -1,4 +1,4 @@
-package com.itis.androidspringcourseitis.data.model.list
+package com.itis.androidspringcourseitis.data.api.model
 
 
 import com.google.gson.annotations.SerializedName

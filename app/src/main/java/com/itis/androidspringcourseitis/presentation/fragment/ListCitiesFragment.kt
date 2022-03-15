@@ -1,7 +1,6 @@
-package com.itis.androidspringcourseitis.fragment
+package com.itis.androidspringcourseitis.presentation.fragment
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -11,29 +10,31 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.itis.androidspringcourseitis.R
-import com.itis.androidspringcourseitis.data.api.WeatherRepository
-import com.itis.androidspringcourseitis.data.model.list.City
 import com.itis.androidspringcourseitis.databinding.FragmentWeatherListBinding
-import com.itis.androidspringcourseitis.recyclerview.CityAdapter
+import com.itis.androidspringcourseitis.presentation.recyclerview.CityAdapter
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.itis.androidspringcourseitis.domain.entity.Weather
+import com.itis.androidspringcourseitis.domain.usecase.GetNearCitiesUseCase
+import com.itis.androidspringcourseitis.domain.usecase.GetWeatherByNameUseCase
 
 private const val COUNT_CITY = 10
 
 class ListCitiesFragment : Fragment() {
     private lateinit var binding: FragmentWeatherListBinding
     private lateinit var cityAdapter: CityAdapter
-    private lateinit var cities: List<City>
+    private lateinit var cities: List<Weather>
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var getWeatherByNameUseCase: GetWeatherByNameUseCase
+    private lateinit var getNearCitiesUseCase: GetNearCitiesUseCase
 
     //Moscow as default city
     private var latitude: Double = 55.644466
@@ -48,10 +49,6 @@ class ListCitiesFragment : Fragment() {
         return binding.root
     }
 
-    private val repository by lazy {
-        WeatherRepository()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -63,9 +60,9 @@ class ListCitiesFragment : Fragment() {
     private fun getList() {
         lifecycleScope.launch {
             try {
-                cities = repository.getNearCities(latitude, longitude, COUNT_CITY).list
+                cities = getNearCitiesUseCase(latitude, longitude, COUNT_CITY).list
                 context?.let{ context ->
-                    cityAdapter = CityAdapter(cities as ArrayList<City>, Glide.with(context)) {city ->
+                    cityAdapter = CityAdapter(cities as ArrayList<Weather>, Glide.with(context)) {city ->
                         navigateToWeatherDetails(city)
                     }
                     binding.rvWeather.adapter = cityAdapter
@@ -92,7 +89,7 @@ class ListCitiesFragment : Fragment() {
             override fun onQueryTextSubmit(cityName: String): Boolean {
                 lifecycleScope.launch {
                     try {
-                        val id = repository.getWeatherByName(cityName).id
+                        val id = getWeatherByNameUseCase(cityName).id
                         navigateToWeatherDetails(id)
                     } catch (ex: HttpException) {
                         Snackbar.make(
