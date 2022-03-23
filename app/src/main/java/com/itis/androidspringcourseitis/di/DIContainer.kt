@@ -1,7 +1,14 @@
 package com.itis.androidspringcourseitis.di
 
 import androidx.viewbinding.BuildConfig
+import com.itis.androidspringcourseitis.data.WeatherRepositoryImpl
 import com.itis.androidspringcourseitis.data.api.WeatherApi
+import com.itis.androidspringcourseitis.data.api.mapper.WeatherMapper
+import com.itis.androidspringcourseitis.domain.repository.WeatherRepository
+import com.itis.androidspringcourseitis.domain.usecase.GetNearCitiesUseCase
+import com.itis.androidspringcourseitis.domain.usecase.GetWeatherByIdUseCase
+import com.itis.androidspringcourseitis.domain.usecase.GetWeatherByNameUseCase
+import kotlinx.coroutines.Dispatchers
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -19,8 +26,7 @@ private const val QUERY_UNITS = "units"
 private const val LANG_CODE = "en"
 private const val QUERY_LANG = "lang"
 
-class DIContainer {
-
+object DIContainer {
 
     //add api key
     private val apiKeyInterceptor = Interceptor { chain ->
@@ -90,5 +96,25 @@ class DIContainer {
             .build()
             .create(WeatherApi::class.java)
     }
+
+    private val weatherRepository: WeatherRepository = WeatherRepositoryImpl(
+        api = api,
+        weatherMapper = WeatherMapper()
+    )
+
+    val getNearCitiesUseCase: GetNearCitiesUseCase = GetNearCitiesUseCase(
+        weatherRepository = weatherRepository,
+        dispatcher = Dispatchers.Default
+    )
+
+    val getWeatherByIdUseCase: GetWeatherByIdUseCase = GetWeatherByIdUseCase(
+        weatherRepository = weatherRepository,
+        dispatcher = Dispatchers.Default
+    )
+
+    val getWeatherByNameUseCase: GetWeatherByNameUseCase = GetWeatherByNameUseCase(
+        weatherRepository = weatherRepository,
+        dispatcher = Dispatchers.Default
+    )
 }
 
