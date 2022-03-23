@@ -3,4 +3,5 @@
     <string name="tv_temp">%1$.1f°C</string>
     <string name="tv_realfeel">ReelFeel %1$.1f°C</string>
     <string name="tv_wind">%1$.1f m/s</string>
+    <string name="transaction_poster">gg</string>
 </resources>

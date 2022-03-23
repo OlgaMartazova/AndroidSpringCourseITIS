@@ -54,6 +54,10 @@ class CityWeatherFragment : Fragment() {
         idCity?.let {
             viewModel.onGetWeatherByNameClick(it)
         }
+
+        //databinding
+        binding = FragmentWeatherDetailsBinding.bind(view)
+        binding.city = city
     }
 
     private fun initObservers() {
@@ -77,7 +81,7 @@ class CityWeatherFragment : Fragment() {
 
     private fun setData(city: Weather) {
         with(binding) {
-            tvCity.text = city.name
+            //tvCity.text = city.name
 
             val gcd = Geocoder(context)
             val addresses = gcd.getFromLocation(city.latitude, city.longitude, 1);
@@ -88,11 +92,11 @@ class CityWeatherFragment : Fragment() {
             }
             glide.load("http://openweathermap.org/img/wn/${city.icon}@2x.png")
                 .into(ivWeather)
-            tvTemp.text = resources.getString(R.string.tv_temp, city.temp)
-            tvWeather.text = city.desc
-            tvRealfeel.text = resources.getString(R.string.tv_realfeel, city.feelsLike)
+            //tvTemp.text = resources.getString(R.string.tv_temp, city.temp)
+            //tvWeather.text = city.desc
+            //tvRealfeel.text = resources.getString(R.string.tv_realfeel, city.feelsLike)
             tvHumidity.text = "${city.humidity}%"
-            tvWind.text = resources.getString(R.string.tv_wind, city.windSpeed)
+            //tvWind.text = resources.getString(R.string.tv_wind, city.windSpeed)
             tvDirection.text = when (city.windDir) {
                 in 0..22 -> "N"
                 in 23..67 -> "NE"
