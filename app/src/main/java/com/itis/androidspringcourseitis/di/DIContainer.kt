@@ -1,9 +1,13 @@
 package com.itis.androidspringcourseitis.di
 
+import android.content.Context
 import androidx.viewbinding.BuildConfig
 import com.itis.androidspringcourseitis.data.WeatherRepositoryImpl
 import com.itis.androidspringcourseitis.data.api.WeatherApi
 import com.itis.androidspringcourseitis.data.api.mapper.WeatherMapper
+import com.itis.androidspringcourseitis.domain.converter.CountryNameConverter
+import com.itis.androidspringcourseitis.domain.converter.DateConverter
+import com.itis.androidspringcourseitis.domain.converter.WindConverter
 import com.itis.androidspringcourseitis.domain.repository.WeatherRepository
 import com.itis.androidspringcourseitis.domain.usecase.GetNearCitiesUseCase
 import com.itis.androidspringcourseitis.domain.usecase.GetWeatherByIdUseCase
@@ -26,7 +30,9 @@ private const val QUERY_UNITS = "units"
 private const val LANG_CODE = "en"
 private const val QUERY_LANG = "lang"
 
-object DIContainer {
+class DIContainer(
+    private val context: Context
+) {
 
     //add api key
     private val apiKeyInterceptor = Interceptor { chain ->
@@ -97,9 +103,14 @@ object DIContainer {
             .create(WeatherApi::class.java)
     }
 
+    private val weatherMapper: WeatherMapper = WeatherMapper(
+        windConverter = WindConverter(),
+        dateConverter = DateConverter(),
+        countryNameConverter = CountryNameConverter(context)
+    )
     private val weatherRepository: WeatherRepository = WeatherRepositoryImpl(
         api = api,
-        weatherMapper = WeatherMapper()
+        weatherMapper = weatherMapper
     )
 
     val getNearCitiesUseCase: GetNearCitiesUseCase = GetNearCitiesUseCase(

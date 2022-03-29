@@ -25,8 +25,8 @@ import com.itis.androidspringcourseitis.di.DIContainer
 import com.itis.androidspringcourseitis.utils.factory.ViewModelFactory
 import com.itis.androidspringcourseitis.domain.entity.Weather
 import com.itis.androidspringcourseitis.presentation.viewmodel.ListViewModel
+import timber.log.Timber
 
-private const val COUNT_CITY = 10
 
 class ListCitiesFragment : Fragment() {
     private lateinit var binding: FragmentWeatherListBinding
@@ -35,6 +35,7 @@ class ListCitiesFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private lateinit var viewModel: ListViewModel
+
     //Moscow as default city
     private var latitude: Double = 55.644466
     private var longitude: Double = 37.395744
@@ -53,24 +54,23 @@ class ListCitiesFragment : Fragment() {
 
         binding.svCity.queryHint = "type a city"
         getLocation()
-
         initObjects()
         initObservers()
-
         searchCity()
     }
 
     private fun initObservers() {
-        viewModel.cities.observe(viewLifecycleOwner) {
-            it.fold(onSuccess = {
-                context?.let{ context ->
-                    cityAdapter = CityAdapter(it as ArrayList<Weather>, Glide.with(context)) { city ->
-                        navigateToWeatherDetails(city)
-                    }
+        viewModel.cities.observe(viewLifecycleOwner) { result ->
+            result.fold(onSuccess = {
+                context?.let { context ->
+                    cityAdapter =
+                        CityAdapter(it as ArrayList<Weather>, Glide.with(context)) { city ->
+                            navigateToWeatherDetails(city)
+                        }
                     binding.rvWeather.adapter = cityAdapter
                 }
             }, onFailure = {
-                Log.e("всё плохо", it.message.toString())
+                Timber.e(it.message.toString())
             })
         }
 
@@ -89,7 +89,7 @@ class ListCitiesFragment : Fragment() {
     }
 
     private fun initObjects() {
-        val factory = ViewModelFactory(DIContainer)
+        val factory = ViewModelFactory(DIContainer(this.requireContext()))
         ViewModelProvider(
             this,
             factory

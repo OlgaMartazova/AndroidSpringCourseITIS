@@ -61,8 +61,8 @@ class CityWeatherFragment : Fragment() {
     }
 
     private fun initObservers() {
-        viewModel.weather.observe(viewLifecycleOwner) {
-            it.fold(onSuccess = { city ->
+        viewModel.weather.observe(viewLifecycleOwner) { result ->
+            result.fold(onSuccess = { city ->
                 setData(city)
             },
                 onFailure = {
@@ -72,7 +72,7 @@ class CityWeatherFragment : Fragment() {
     }
 
     private fun initObjects() {
-        val factory = ViewModelFactory(DIContainer)
+        val factory = ViewModelFactory(DIContainer(this.requireContext()))
         ViewModelProvider(
             this,
             factory
@@ -81,47 +81,8 @@ class CityWeatherFragment : Fragment() {
 
     private fun setData(city: Weather) {
         with(binding) {
-            //tvCity.text = city.name
-
-            val gcd = Geocoder(context)
-            val addresses = gcd.getFromLocation(city.latitude, city.longitude, 1);
-
-            if (addresses.size > 0) {
-                val countryName = addresses[0].countryName
-                tvCountry.text = countryName
-            }
             glide.load("http://openweathermap.org/img/wn/${city.icon}@2x.png")
                 .into(ivWeather)
-            //tvTemp.text = resources.getString(R.string.tv_temp, city.temp)
-            //tvWeather.text = city.desc
-            //tvRealfeel.text = resources.getString(R.string.tv_realfeel, city.feelsLike)
-            tvHumidity.text = "${city.humidity}%"
-            //tvWind.text = resources.getString(R.string.tv_wind, city.windSpeed)
-            tvDirection.text = when (city.windDir) {
-                in 0..22 -> "N"
-                in 23..67 -> "NE"
-                in 68..112 -> "E"
-                in 113..157 -> "SE"
-                in 158..202 -> "S"
-                in 203..247 -> "SW"
-                in 248..292 -> "W"
-                in 293..337 -> "NW"
-                in 337..360 -> "N"
-                else -> "Not found"
-            }
-            val formatter = SimpleDateFormat("HH:mm")
-
-            var date = Date((city.sunrise + city.timezone) * 1000.toLong())
-            tvSunrise.text = formatter.format(date)
-
-            date = Date((city.sunset + city.timezone) * 1000.toLong())
-            tvSunset.text = formatter.format(date)
-
-
-            formatter.timeZone = TimeZone.getTimeZone("UTC")
-            val dateInUtc = Date()
-            date = Date(dateInUtc.time + city.timezone * 1000.toLong())
-            tvCurrentTime.text = formatter.format(date)
         }
     }
 }
