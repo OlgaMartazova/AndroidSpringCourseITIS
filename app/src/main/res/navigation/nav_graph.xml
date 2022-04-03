@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/fragment_weather_list"
-        android:name="com.itis.androidspringcourseitis.fragment.ListCitiesFragment"
+        android:name="com.itis.androidspringcourseitis.presentation.fragment.ListCitiesFragment"
         android:label="fragment_first"
         tools:layout="@layout/fragment_weather_list">
         <action
@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/fragment_detail"
-        android:name="com.itis.androidspringcourseitis.fragment.CityWeatherFragment"
+        android:name="com.itis.androidspringcourseitis.presentation.fragment.CityWeatherFragment"
         android:label="fragment_second"
         tools:layout="@layout/fragment_weather_details">
     </fragment>

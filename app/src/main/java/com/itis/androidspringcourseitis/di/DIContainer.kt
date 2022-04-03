@@ -1,8 +1,7 @@
-package com.itis.androidspringcourseitis.data.api
+package com.itis.androidspringcourseitis.di
 
 import androidx.viewbinding.BuildConfig
-import com.itis.androidspringcourseitis.data.model.info.WeatherInfo
-import com.itis.androidspringcourseitis.data.model.list.WeatherList
+import com.itis.androidspringcourseitis.data.api.WeatherApi
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -20,7 +19,7 @@ private const val QUERY_UNITS = "units"
 private const val LANG_CODE = "en"
 private const val QUERY_LANG = "lang"
 
-class WeatherRepository {
+class DIContainer {
 
 
     //add api key
@@ -91,17 +90,5 @@ class WeatherRepository {
             .build()
             .create(WeatherApi::class.java)
     }
-
-
-    suspend fun getWeatherByName(city: String): WeatherInfo {
-        return api.getWeatherByName(city)
-    }
-
-    suspend fun getWeatherById(id: Int): WeatherInfo {
-        return api.getWeatherById(id)
-    }
-
-    suspend fun getNearCities(latitude: Double, longitude: Double, count: Int): WeatherList {
-        return api.getNearCities(latitude, longitude, count)
-    }
 }
+

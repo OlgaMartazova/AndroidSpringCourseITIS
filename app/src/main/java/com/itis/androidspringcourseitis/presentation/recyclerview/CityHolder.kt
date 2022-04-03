@@ -1,18 +1,13 @@
-package com.itis.androidspringcourseitis.recyclerview
+package com.itis.androidspringcourseitis.presentation.recyclerview
 
-import android.content.Context
-import android.content.res.Resources
-import android.provider.Settings.Global.getString
-import android.provider.Settings.System.getString
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.itis.androidspringcourseitis.R
-import com.itis.androidspringcourseitis.data.model.list.City
-import com.itis.androidspringcourseitis.databinding.ItemWeatherBinding
 import com.itis.androidspringcourseitis.databinding.ItemWeatherCvBinding
+import com.itis.androidspringcourseitis.domain.entity.Weather
 
 class CityHolder(
     private val binding: ItemWeatherCvBinding,
@@ -20,7 +15,7 @@ class CityHolder(
     private val selectCity: (Int) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    private var city: City? = null
+    private var city: Weather? = null
 
     init{
         itemView.setOnClickListener {
@@ -28,17 +23,17 @@ class CityHolder(
         }
     }
 
-    fun bind(item: City) {
+    fun bind(item: Weather) {
         city = item
         with(binding) {
-            glide.load("http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png")
+            glide.load("http://openweathermap.org/img/wn/${item.icon}@2x.png")
                 .into(ivSmallWeather)
             tvName.text = item.name
-            val temp = String.format("%.1f", item.main.temp)
+            val temp = String.format("%.1f", item.temp)
             tvTemp.text = "${temp}°C"
             //tvTemp.text = Resources.getSystem().getString(R.string.tv_temp, item.main.temp)
 
-            when (item.main.temp) {
+            when (item.temp) {
                 in 30.0..40.0 -> setColor(R.color.temp_40)
                 in 20.0..30.0 -> setColor(R.color.temp_30)
                 in 15.0..20.0 -> setColor(R.color.temp_20)

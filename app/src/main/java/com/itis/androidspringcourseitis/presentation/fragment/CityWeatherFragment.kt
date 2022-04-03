@@ -1,8 +1,5 @@
-package com.itis.androidspringcourseitis.fragment
+package com.itis.androidspringcourseitis.presentation.fragment
 
-import android.annotation.SuppressLint
-import android.content.res.Resources
-import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,21 +10,24 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.itis.androidspringcourseitis.R
-import com.itis.androidspringcourseitis.data.api.WeatherRepository
-import com.itis.androidspringcourseitis.data.model.info.WeatherInfo
+import com.itis.androidspringcourseitis.domain.repository.WeatherRepository
+import com.itis.androidspringcourseitis.data.api.model.WeatherInfo
 import com.itis.androidspringcourseitis.databinding.FragmentWeatherDetailsBinding
+import com.itis.androidspringcourseitis.domain.entity.Weather
+import com.itis.androidspringcourseitis.domain.usecase.GetWeatherByIdUseCase
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import timber.log.Timber
-import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
 
 class CityWeatherFragment : Fragment() {
 
     private lateinit var binding: FragmentWeatherDetailsBinding
-    private lateinit var city: WeatherInfo
+    private lateinit var city: Weather
     private lateinit var glide: RequestManager
+
+    private lateinit var getWeatherUseCase: GetWeatherByIdUseCase
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,7 +51,7 @@ class CityWeatherFragment : Fragment() {
     private fun getData(idCity: Int) {
         lifecycleScope.launch {
             try {
-                city = repository.getWeatherById(idCity)
+                city = getWeatherUseCase(idCity)
                 setData(city)
             } catch (ex: HttpException) {
                 Timber.e(ex.message.toString())
@@ -59,25 +59,25 @@ class CityWeatherFragment : Fragment() {
         }
     }
 
-    private fun setData(city: WeatherInfo) {
+    private fun setData(city: Weather) {
         with(binding) {
             tvCity.text = city.name
 
             val gcd = Geocoder(context)
-            val addresses = gcd.getFromLocation(city.coord.lat, city.coord.lon, 1);
+            val addresses = gcd.getFromLocation(city.latitude, city.longitude, 1);
 
             if (addresses.size > 0) {
                 val countryName = addresses[0].countryName
                 tvCountry.text = countryName
             }
-            glide.load("http://openweathermap.org/img/wn/${city.weather[0].icon}@2x.png")
+            glide.load("http://openweathermap.org/img/wn/${city.icon}@2x.png")
                 .into(ivWeather)
-            tvTemp.text = resources.getString(R.string.tv_temp, city.main.temp)
-            tvWeather.text = city.weather[0].description
-            tvRealfeel.text = resources.getString(R.string.tv_realfeel, city.main.feelsLike)
-            tvHumidity.text = "${city.main.humidity}%"
-            tvWind.text = resources.getString(R.string.tv_wind, city.wind.speed)
-            tvDirection.text = when (city.wind.deg) {
+            tvTemp.text = resources.getString(R.string.tv_temp, city.temp)
+            tvWeather.text = city.desc
+            tvRealfeel.text = resources.getString(R.string.tv_realfeel, city.feelsLike)
+            tvHumidity.text = "${city.humidity}%"
+            tvWind.text = resources.getString(R.string.tv_wind, city.windSpeed)
+            tvDirection.text = when (city.windDir) {
                 in 0..22 -> "N"
                 in 23..67 -> "NE"
                 in 68..112 -> "E"
@@ -91,10 +91,10 @@ class CityWeatherFragment : Fragment() {
             }
             val formatter = SimpleDateFormat("HH:mm")
 
-            var date = Date((city.sys.sunrise + city.timezone) * 1000.toLong())
+            var date = Date((city.sunrise + city.timezone) * 1000.toLong())
             tvSunrise.text = formatter.format(date)
 
-            date = Date((city.sys.sunset + city.timezone) * 1000.toLong())
+            date = Date((city.sunset + city.timezone) * 1000.toLong())
             tvSunset.text = formatter.format(date)
 
 
@@ -104,10 +104,4 @@ class CityWeatherFragment : Fragment() {
             tvCurrentTime.text = formatter.format(date)
         }
     }
-
-    private val repository by lazy {
-        WeatherRepository()
-    }
-
-
 }
