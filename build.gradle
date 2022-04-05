@@ -17,6 +17,7 @@ plugins {
     id "io.gitlab.arturbosch.detekt" version "1.18.1"
 }
 
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }

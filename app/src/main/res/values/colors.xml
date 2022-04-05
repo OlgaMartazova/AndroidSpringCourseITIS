@@ -7,4 +7,15 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="temp_40">#FF5722</color>
+    <color name="temp_30">#FF9800</color>
+    <color name="temp_20">#FFC107</color>
+    <color name="temp_15">#8BC34A</color>
+    <color name="temp_10">#4CAF50</color>
+    <color name="temp_0">#009688</color>
+    <color name="temp_minus_5">#00BCD4</color>
+    <color name="temp_minus_15">#3F51B5</color>
+    <color name="temp_minus_25">#673AB7</color>
+    <color name="temp_minus_35">#32097C</color>
+    <color name="champaigne">#002AFF</color>
 </resources>
