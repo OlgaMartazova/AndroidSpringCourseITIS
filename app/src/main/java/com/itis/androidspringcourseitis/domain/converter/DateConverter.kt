@@ -3,8 +3,9 @@ package com.itis.androidspringcourseitis.domain.converter
 import android.annotation.SuppressLint
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
-class DateConverter {
+class DateConverter @Inject constructor(){
     @SuppressLint("SimpleDateFormat")
     fun convertDate(dateInSeconds: Int?, timezone: Int): String {
         val formatter = SimpleDateFormat("HH:mm")
