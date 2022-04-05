@@ -1,40 +1,36 @@
 package com.itis.androidspringcourseitis.presentation.fragment
 
 import android.Manifest
-import android.app.ActivityOptions
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
 import com.itis.androidspringcourseitis.R
 import com.itis.androidspringcourseitis.databinding.FragmentWeatherListBinding
-import com.itis.androidspringcourseitis.presentation.recyclerview.CityAdapter
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.itis.androidspringcourseitis.di.DIContainer
-import com.itis.androidspringcourseitis.utils.factory.ViewModelFactory
 import com.itis.androidspringcourseitis.domain.entity.Weather
+import com.itis.androidspringcourseitis.presentation.recyclerview.CityAdapter
 import com.itis.androidspringcourseitis.presentation.viewmodel.ListViewModel
 import timber.log.Timber
+import javax.inject.Inject
 
 
 class ListCitiesFragment : Fragment() {
     private lateinit var binding: FragmentWeatherListBinding
     private lateinit var cityAdapter: CityAdapter
-    private lateinit var cities: List<Weather>
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-    private lateinit var viewModel: ListViewModel
+    @Inject
+    lateinit var viewModel : ListViewModel
 
     //Moscow as default city
     private var latitude: Double = 55.644466
@@ -54,7 +50,6 @@ class ListCitiesFragment : Fragment() {
 
         binding.svCity.queryHint = "type a city"
         getLocation()
-        initObjects()
         initObservers()
         searchCity()
     }
@@ -86,14 +81,6 @@ class ListCitiesFragment : Fragment() {
                     ).show()
                 })
         }
-    }
-
-    private fun initObjects() {
-        val factory = ViewModelFactory(DIContainer(this.requireContext()))
-        viewModel = ViewModelProvider(
-            this,
-            factory
-        )[ListViewModel::class.java]
     }
 
     private fun navigateToWeatherDetails(idCity: Int) {

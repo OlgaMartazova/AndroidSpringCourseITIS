@@ -8,8 +8,9 @@ import com.itis.androidspringcourseitis.domain.entity.Weather
 import com.itis.androidspringcourseitis.domain.usecase.GetNearCitiesUseCase
 import com.itis.androidspringcourseitis.domain.usecase.GetWeatherByNameUseCase
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ListViewModel(
+class ListViewModel @Inject constructor(
     private val getWeatherByNameUseCase: GetWeatherByNameUseCase,
     private val getNearCitiesUseCase: GetNearCitiesUseCase,
 ) : ViewModel() {

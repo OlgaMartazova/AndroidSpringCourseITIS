@@ -7,8 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.itis.androidspringcourseitis.domain.entity.Weather
 import com.itis.androidspringcourseitis.domain.usecase.GetWeatherByIdUseCase
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class InfoViewModel(
+class InfoViewModel @Inject constructor(
     private val getWeatherByIdUseCase: GetWeatherByIdUseCase
 ) : ViewModel() {
 

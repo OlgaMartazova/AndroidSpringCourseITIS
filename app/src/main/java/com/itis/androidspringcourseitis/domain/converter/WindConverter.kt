@@ -1,6 +1,8 @@
 package com.itis.androidspringcourseitis.domain.converter
 
-class WindConverter {
+import javax.inject.Inject
+
+class WindConverter @Inject constructor(){
     fun convertWindDir(windDeg: Int): String {
         return when (windDeg) {
             in 0..22 -> "N"

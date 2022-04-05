@@ -2,26 +2,18 @@ package com.itis.androidspringcourseitis.utils.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.itis.androidspringcourseitis.di.DIContainer
-import com.itis.androidspringcourseitis.presentation.viewmodel.InfoViewModel
-import com.itis.androidspringcourseitis.presentation.viewmodel.ListViewModel
+import javax.inject.Inject
+import javax.inject.Provider
 
-class ViewModelFactory (
-    private val di: DIContainer
+class ViewModelFactory @Inject constructor(
+    private val viewModelMap: Map<Class<out ViewModel>,
+            @JvmSuppressWildcards Provider<ViewModel>>
 ) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        when {
-            modelClass.isAssignableFrom(ListViewModel::class.java) ->
-                ListViewModel(
-                    di.getWeatherByNameUseCase,
-                    di.getNearCitiesUseCase
-                ) as? T ?: throw IllegalArgumentException("Unknown ViewModel class")
-            modelClass.isAssignableFrom(InfoViewModel::class.java) ->
-                InfoViewModel(
-                    di.getWeatherByIdUseCase
-                ) as? T ?: throw IllegalArgumentException("Unknown ViewModel class")
-            else ->
-                throw IllegalArgumentException("Unknown ViewModel class")
-        }
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        val result = viewModelMap[modelClass] ?: viewModelMap.entries.firstOrNull {
+            modelClass.isAssignableFrom(it.key)
+        }?.value ?: throw IllegalArgumentException("Unknown model class $modelClass")
+        @Suppress("UNCHECKED_CAST")
+        return result.get() as T
+    }
 }

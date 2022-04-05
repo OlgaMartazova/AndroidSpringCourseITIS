@@ -5,8 +5,9 @@ import com.itis.androidspringcourseitis.data.api.mapper.WeatherMapper
 import com.itis.androidspringcourseitis.domain.entity.Cities
 import com.itis.androidspringcourseitis.domain.entity.Weather
 import com.itis.androidspringcourseitis.domain.repository.WeatherRepository
+import javax.inject.Inject
 
-class WeatherRepositoryImpl(
+class WeatherRepositoryImpl @Inject constructor(
     private val api: WeatherApi,
     private val weatherMapper: WeatherMapper,
 ) : WeatherRepository {

@@ -9,8 +9,9 @@ import com.itis.androidspringcourseitis.domain.converter.DateConverter
 import com.itis.androidspringcourseitis.domain.converter.WindConverter
 import com.itis.androidspringcourseitis.domain.entity.Cities
 import com.itis.androidspringcourseitis.domain.entity.Weather
+import javax.inject.Inject
 
-class WeatherMapper(
+class WeatherMapper @Inject constructor(
     private val windConverter: WindConverter,
     private val dateConverter: DateConverter,
     private val countryNameConverter: CountryNameConverter

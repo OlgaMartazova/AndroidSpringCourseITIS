@@ -2,8 +2,9 @@ package com.itis.androidspringcourseitis.domain.converter
 
 import android.content.Context
 import android.location.Geocoder
+import javax.inject.Inject
 
-class CountryNameConverter(
+class CountryNameConverter @Inject constructor(
     private var context: Context
 ) {
     fun getCountryName(latitude: Double, longitude: Double): String {
