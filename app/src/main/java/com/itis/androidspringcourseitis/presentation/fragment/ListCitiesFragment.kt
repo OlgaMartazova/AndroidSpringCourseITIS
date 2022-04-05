@@ -90,7 +90,7 @@ class ListCitiesFragment : Fragment() {
 
     private fun initObjects() {
         val factory = ViewModelFactory(DIContainer(this.requireContext()))
-        ViewModelProvider(
+        viewModel = ViewModelProvider(
             this,
             factory
         )[ListViewModel::class.java]
