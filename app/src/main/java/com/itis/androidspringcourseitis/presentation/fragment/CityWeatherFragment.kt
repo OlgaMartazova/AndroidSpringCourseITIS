@@ -9,6 +9,7 @@ import com.bumptech.glide.RequestManager
 import com.itis.androidspringcourseitis.R
 import com.itis.androidspringcourseitis.databinding.FragmentWeatherDetailsBinding
 import com.itis.androidspringcourseitis.domain.entity.Weather
+import com.itis.androidspringcourseitis.presentation.activity.MainActivity
 import com.itis.androidspringcourseitis.presentation.viewmodel.InfoViewModel
 import com.itis.androidspringcourseitis.utils.factory.ViewModelFactory
 import timber.log.Timber
@@ -22,6 +23,11 @@ class CityWeatherFragment : Fragment(R.layout.fragment_weather_details) {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: InfoViewModel by viewModels { viewModelFactory }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        (activity as MainActivity).appComponent.inject(this)
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

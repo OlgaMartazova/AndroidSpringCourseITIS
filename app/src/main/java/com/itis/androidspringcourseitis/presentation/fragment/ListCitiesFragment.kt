@@ -4,9 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
@@ -19,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.itis.androidspringcourseitis.R
 import com.itis.androidspringcourseitis.databinding.FragmentWeatherListBinding
 import com.itis.androidspringcourseitis.domain.entity.Weather
+import com.itis.androidspringcourseitis.presentation.activity.MainActivity
 import com.itis.androidspringcourseitis.presentation.recyclerview.CityAdapter
 import com.itis.androidspringcourseitis.presentation.viewmodel.ListViewModel
 import com.itis.androidspringcourseitis.utils.factory.ViewModelFactory
@@ -26,7 +25,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
-class ListCitiesFragment : Fragment() {
+class ListCitiesFragment : Fragment(R.layout.fragment_weather_list) {
     private lateinit var binding: FragmentWeatherListBinding
     private lateinit var cityAdapter: CityAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -39,18 +38,14 @@ class ListCitiesFragment : Fragment() {
     private var latitude: Double = 55.644466
     private var longitude: Double = 37.395744
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentWeatherListBinding.inflate(inflater, container, false)
-        return binding.root
+    override fun onCreate(savedInstanceState: Bundle?) {
+        (activity as MainActivity).appComponent.inject(this)
+        super.onCreate(savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        binding = FragmentWeatherListBinding.bind(view)
         binding.svCity.queryHint = "type a city"
         getLocation()
         initObservers()
