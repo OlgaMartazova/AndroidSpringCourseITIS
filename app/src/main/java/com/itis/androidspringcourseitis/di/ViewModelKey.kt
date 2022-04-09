@@ -1,4 +1,4 @@
-package com.itis.androidspringcourseitis.di.module.viewmodel
+package com.itis.androidspringcourseitis.di
 
 import androidx.lifecycle.ViewModel
 import dagger.MapKey

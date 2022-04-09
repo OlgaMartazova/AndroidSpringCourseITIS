@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -20,6 +21,7 @@ import com.itis.androidspringcourseitis.databinding.FragmentWeatherListBinding
 import com.itis.androidspringcourseitis.domain.entity.Weather
 import com.itis.androidspringcourseitis.presentation.recyclerview.CityAdapter
 import com.itis.androidspringcourseitis.presentation.viewmodel.ListViewModel
+import com.itis.androidspringcourseitis.utils.factory.ViewModelFactory
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -30,7 +32,8 @@ class ListCitiesFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     @Inject
-    lateinit var viewModel : ListViewModel
+    lateinit var viewModelFactory: ViewModelFactory
+    private val viewModel: ListViewModel by viewModels { viewModelFactory }
 
     //Moscow as default city
     private var latitude: Double = 55.644466

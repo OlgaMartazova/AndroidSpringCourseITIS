@@ -16,7 +16,7 @@ class InfoViewModel @Inject constructor(
     private var _weather: MutableLiveData<Result<Weather>> = MutableLiveData()
     val weather: LiveData<Result<Weather>> = _weather
 
-    fun onGetWeatherByNameClick(cityId: Int) {
+    fun onGetWeatherByIdClick(cityId: Int) {
         viewModelScope.launch {
             try {
                 val weather = getWeatherByIdUseCase(cityId)

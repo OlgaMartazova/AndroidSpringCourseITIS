@@ -8,14 +8,14 @@ import com.itis.androidspringcourseitis.utils.factory.ViewModelFactory
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
+import com.itis.androidspringcourseitis.di.ViewModelKey
 
 @Module
 interface ViewModelModule {
-    @Binds
+        @Binds
     fun bindViewModelFactory(
         factory: ViewModelFactory
     ): ViewModelProvider.Factory
-
 
     @Binds
     @IntoMap
@@ -30,5 +30,4 @@ interface ViewModelModule {
     fun bindListViewModel(
         infoViewModel: ListViewModel
     ): ViewModel
-
 }
