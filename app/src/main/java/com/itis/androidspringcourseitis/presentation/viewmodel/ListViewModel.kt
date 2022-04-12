@@ -7,9 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.itis.androidspringcourseitis.domain.entity.Weather
 import com.itis.androidspringcourseitis.domain.usecase.GetNearCitiesUseCase
 import com.itis.androidspringcourseitis.domain.usecase.GetWeatherByNameUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
+@HiltViewModel
 class ListViewModel @Inject constructor(
     private val getWeatherByNameUseCase: GetWeatherByNameUseCase,
     private val getNearCitiesUseCase: GetNearCitiesUseCase,
