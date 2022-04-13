@@ -68,7 +68,7 @@ class ListCitiesFragment : Fragment(R.layout.fragment_weather_list) {
         }
 
         viewModel.weather.observe(viewLifecycleOwner) {
-            it.fold(onSuccess = { weather ->
+            it?.fold(onSuccess = { weather ->
                 navigateToWeatherDetails(weather.id)
             },
                 onFailure = {

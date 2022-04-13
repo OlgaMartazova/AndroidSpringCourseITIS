@@ -30,8 +30,8 @@ class ListViewModel @Inject constructor(
         }
     }
 
-    private var _weather: MutableLiveData<Result<Weather>> = MutableLiveData()
-    val weather: LiveData<Result<Weather>> = _weather
+    private var _weather: SingleLiveEvent<Result<Weather>> = SingleLiveEvent<Result<Weather>>()
+    val weather: SingleLiveEvent<Result<Weather>> = _weather
 
     fun onGetWeatherByNameClick(cityName: String) {
         viewModelScope.launch {
