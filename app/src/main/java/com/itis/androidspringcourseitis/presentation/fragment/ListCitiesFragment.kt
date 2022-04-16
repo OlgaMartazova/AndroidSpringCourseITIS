@@ -4,37 +4,35 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
 import com.itis.androidspringcourseitis.R
 import com.itis.androidspringcourseitis.databinding.FragmentWeatherListBinding
-import com.itis.androidspringcourseitis.presentation.recyclerview.CityAdapter
-import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.itis.androidspringcourseitis.di.DIContainer
 import com.itis.androidspringcourseitis.domain.entity.Weather
-import com.itis.androidspringcourseitis.domain.usecase.GetNearCitiesUseCase
-import com.itis.androidspringcourseitis.domain.usecase.GetWeatherByNameUseCase
+import com.itis.androidspringcourseitis.presentation.recyclerview.CityAdapter
+import com.itis.androidspringcourseitis.presentation.viewmodel.ListViewModel
+import com.itis.androidspringcourseitis.utils.factory.ViewModelFactory
+import timber.log.Timber
 
-private const val COUNT_CITY = 10
 
 class ListCitiesFragment : Fragment() {
     private lateinit var binding: FragmentWeatherListBinding
     private lateinit var cityAdapter: CityAdapter
     private lateinit var cities: List<Weather>
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var getWeatherByNameUseCase: GetWeatherByNameUseCase
-    private lateinit var getNearCitiesUseCase: GetNearCitiesUseCase
+
+    private lateinit var viewModel: ListViewModel
 
     //Moscow as default city
     private var latitude: Double = 55.644466
@@ -54,23 +52,46 @@ class ListCitiesFragment : Fragment() {
 
         binding.svCity.queryHint = "type a city"
         getLocation()
+        initObjects()
+        initObservers()
         searchCity()
     }
 
-    private fun getList() {
-        lifecycleScope.launch {
-            try {
-                cities = getNearCitiesUseCase(latitude, longitude, COUNT_CITY).list
-                context?.let{ context ->
-                    cityAdapter = CityAdapter(cities as ArrayList<Weather>, Glide.with(context)) {city ->
-                        navigateToWeatherDetails(city)
-                    }
+    private fun initObservers() {
+        viewModel.cities.observe(viewLifecycleOwner) { result ->
+            result.fold(onSuccess = {
+                context?.let { context ->
+                    cityAdapter =
+                        CityAdapter(it as ArrayList<Weather>, Glide.with(context)) { city ->
+                            navigateToWeatherDetails(city)
+                        }
                     binding.rvWeather.adapter = cityAdapter
                 }
-            } catch (ex: HttpException) {
-                Log.e("всё плохо", ex.message.toString())
-            }
+            }, onFailure = {
+                Timber.e(it.message.toString())
+            })
         }
+
+        viewModel.weather.observe(viewLifecycleOwner) {
+            it?.fold(onSuccess = { weather ->
+                navigateToWeatherDetails(weather.id)
+            },
+                onFailure = {
+                    Snackbar.make(
+                        binding.root,
+                        "City Not Found",
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                })
+        }
+    }
+
+    private fun initObjects() {
+        val factory = ViewModelFactory(DIContainer(this.requireContext()))
+        viewModel = ViewModelProvider(
+            this,
+            factory
+        )[ListViewModel::class.java]
     }
 
     private fun navigateToWeatherDetails(idCity: Int) {
@@ -87,18 +108,7 @@ class ListCitiesFragment : Fragment() {
             }
 
             override fun onQueryTextSubmit(cityName: String): Boolean {
-                lifecycleScope.launch {
-                    try {
-                        val id = getWeatherByNameUseCase(cityName).id
-                        navigateToWeatherDetails(id)
-                    } catch (ex: HttpException) {
-                        Snackbar.make(
-                            binding.root,
-                            "City Not Found",
-                            Snackbar.LENGTH_LONG
-                        ).show()
-                    }
-                }
+                viewModel.onGetWeatherByNameClick(cityName)
                 return false
             }
         })
@@ -119,7 +129,7 @@ class ListCitiesFragment : Fragment() {
                     latitude = location.latitude
                     longitude = location.longitude
                 }
-                getList()
+                viewModel.onGetNearCitiesClick(latitude, longitude)
             }
         } else {
             val permissions = arrayOf(
@@ -142,7 +152,7 @@ class ListCitiesFragment : Fragment() {
                 } else {
                     Snackbar.make(binding.root, "access denied", Snackbar.LENGTH_SHORT)
                         .show()
-                    getList()
+                    viewModel.onGetNearCitiesClick(latitude, longitude)
                 }
             }
         }
