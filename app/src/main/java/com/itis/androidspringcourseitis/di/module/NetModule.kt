@@ -2,14 +2,19 @@ package com.itis.androidspringcourseitis.di.module
 
 import androidx.viewbinding.BuildConfig
 import com.itis.androidspringcourseitis.data.api.WeatherApi
+import com.itis.androidspringcourseitis.di.qualifier.ApiInterceptor
+import com.itis.androidspringcourseitis.di.qualifier.LangInterceptor
+import com.itis.androidspringcourseitis.di.qualifier.LoggingInterceptor
+import com.itis.androidspringcourseitis.di.qualifier.UnitsInterceptor
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import javax.inject.Qualifier
 
 
 private const val BASE_URL = "https://api.openweathermap.org/data/2.5/"
@@ -24,6 +29,7 @@ private const val LANG_CODE = "en"
 private const val QUERY_LANG = "lang"
 
 @Module
+@InstallIn(SingletonComponent::class)
 class NetModule {
 
     @Provides
@@ -118,20 +124,4 @@ class NetModule {
             .addConverterFactory(gsonConverter)
             .build()
             .create(WeatherApi::class.java)
-
-    @Qualifier
-    @Retention(AnnotationRetention.RUNTIME)
-    annotation class ApiInterceptor
-
-    @Qualifier
-    @Retention(AnnotationRetention.RUNTIME)
-    annotation class UnitsInterceptor
-
-    @Qualifier
-    @Retention(AnnotationRetention.RUNTIME)
-    annotation class LangInterceptor
-
-    @Qualifier
-    @Retention(AnnotationRetention.RUNTIME)
-    annotation class LoggingInterceptor
 }

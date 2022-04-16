@@ -9,24 +9,26 @@ import com.bumptech.glide.RequestManager
 import com.itis.androidspringcourseitis.R
 import com.itis.androidspringcourseitis.databinding.FragmentWeatherDetailsBinding
 import com.itis.androidspringcourseitis.domain.entity.Weather
-import com.itis.androidspringcourseitis.presentation.activity.MainActivity
 import com.itis.androidspringcourseitis.presentation.viewmodel.InfoViewModel
-import com.itis.androidspringcourseitis.utils.factory.ViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class CityWeatherFragment : Fragment(R.layout.fragment_weather_details) {
 
     private lateinit var binding: FragmentWeatherDetailsBinding
     private lateinit var glide: RequestManager
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-    private val viewModel: InfoViewModel by viewModels { viewModelFactory }
+    private val idCity: Int by lazy {
+        arguments?.getInt("idCity") ?: -1
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        (activity as MainActivity).appComponent.inject(this)
-        super.onCreate(savedInstanceState)
+    @Inject
+    lateinit var viewModelFactory: InfoViewModel.WeatherViewModelFactory
+
+    private val viewModel: InfoViewModel by viewModels {
+        InfoViewModel.provideFactory(viewModelFactory, idCity)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -34,11 +36,8 @@ class CityWeatherFragment : Fragment(R.layout.fragment_weather_details) {
         binding = FragmentWeatherDetailsBinding.bind(view)
         initObservers()
 
-        val idCity = arguments?.getInt("idCity")
         glide = Glide.with(this)
-        idCity?.let {
-            viewModel.onGetWeatherByIdClick(it)
-        }
+        viewModel.onGetWeatherByIdClick()
     }
 
     private fun initObservers() {

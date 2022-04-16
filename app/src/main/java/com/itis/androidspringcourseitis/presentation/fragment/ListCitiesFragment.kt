@@ -17,31 +17,23 @@ import com.google.android.material.snackbar.Snackbar
 import com.itis.androidspringcourseitis.R
 import com.itis.androidspringcourseitis.databinding.FragmentWeatherListBinding
 import com.itis.androidspringcourseitis.domain.entity.Weather
-import com.itis.androidspringcourseitis.presentation.activity.MainActivity
 import com.itis.androidspringcourseitis.presentation.recyclerview.CityAdapter
 import com.itis.androidspringcourseitis.presentation.viewmodel.ListViewModel
-import com.itis.androidspringcourseitis.utils.factory.ViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
-import javax.inject.Inject
 
 
+@AndroidEntryPoint
 class ListCitiesFragment : Fragment(R.layout.fragment_weather_list) {
     private lateinit var binding: FragmentWeatherListBinding
     private lateinit var cityAdapter: CityAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-    private val viewModel: ListViewModel by viewModels { viewModelFactory }
+    private val viewModel: ListViewModel by viewModels()
 
     //Moscow as default city
     private var latitude: Double = 55.644466
     private var longitude: Double = 37.395744
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        (activity as MainActivity).appComponent.inject(this)
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
