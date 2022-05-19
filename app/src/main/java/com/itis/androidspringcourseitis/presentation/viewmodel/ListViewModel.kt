@@ -31,7 +31,7 @@ class ListViewModel @Inject constructor(
         }
     }
 
-    private var _weather: SingleLiveEvent<Result<Weather>> = SingleLiveEvent<Result<Weather>>()
+    private var _weather: SingleLiveEvent<Result<Weather>> = SingleLiveEvent()
     val weather: SingleLiveEvent<Result<Weather>> = _weather
 
     fun onGetWeatherByNameClick(cityName: String) {
